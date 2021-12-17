@@ -32,14 +32,15 @@ Shader "Unlit/DivShader"
             v2f vert (appdata v)
             {
                 v2f o;
-                o.vertex = UnityObjectToClipPos(v.vertex);
+                o.vertex = v.vertex;
                 return o;
             }
 
             float4 _BackgroundColor;
             fixed4 frag (v2f i) : SV_Target
             {
-                fixed4 col = _BackgroundColor;
+                // fixed4 col = _BackgroundColor;
+                fixed4 col = float4(1,0,0,1);
                 return col;
             }
             ENDCG

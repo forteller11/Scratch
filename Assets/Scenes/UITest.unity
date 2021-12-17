@@ -267,7 +267,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 67a371e10c5a41408a72e9bbe536d93f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  Camera: {fileID: 1376634510}
   Material: {fileID: 2100000, guid: e2d6653f4b3cd384894bdf4f7dcbf514, type: 2}
+  InitialLayer: -4
 --- !u!4 &1120561195
 Transform:
   m_ObjectHideFlags: 0

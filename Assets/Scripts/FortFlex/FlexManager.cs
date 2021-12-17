@@ -9,8 +9,10 @@ namespace Fort.Flex
 {
     public class FlexManager : MonoBehaviour
     {
+        public Camera Camera;
         public Material Material;
         private const float Z_INCREMENT_BY_LAYER = 0.05f;
+        public int InitialLayer = 0;
         public Div Root;
 
         private void Start()
@@ -23,7 +25,7 @@ namespace Fort.Flex
 
         private void Update()
         {
-            DrawRecurse(Root, new ScreenBound(Screen.width, Screen.height), 0);
+            DrawRecurse(Root, new ScreenBound(Screen.width, Screen.height), InitialLayer);
         }
 
         public void DrawRecurse(Div parent, ScreenBound screenAbsolute, int layer)
@@ -46,7 +48,7 @@ namespace Fort.Flex
 
             #region positioning screen
 
-                var posStartScreen = ui.LocalPosition + drawBoundsScreen.Value.xw;
+                var posStartScreen = ui.LocalPosition + drawBoundsScreen.Value.xz;
                 float2 posEndScreen = posStartScreen + ui.WorldScale;
                 var boundsScreen = new ScreenBound(posStartScreen, posEndScreen);
                 #endregion
@@ -67,33 +69,45 @@ namespace Fort.Flex
                 float3 lt = new float3(posStartView.x, posEndView.y, z);
                 float3 rt = new float3(posEndView, z);
 
-                NativeArray<float3> vertices = new NativeArray<float3>(6, Allocator.Temp, NativeArrayOptions.UninitializedMemory);
+                NativeArray<float3> vertices = new NativeArray<float3>(4, Allocator.Temp, NativeArrayOptions.ClearMemory);
                 vertices[0] = lb;
                 vertices[1] = rb;
                 vertices[2] = lt;
                 vertices[3] = rt;
 
-                NativeArray<int> indices = new NativeArray<int>(6, Allocator.Temp, NativeArrayOptions.UninitializedMemory);
+                NativeArray<int> indices = new NativeArray<int>(6, Allocator.Temp, NativeArrayOptions.ClearMemory);
 
+                //Clock-Wise winding (why Unity, why)
                 // upper left tri
                 indices[0] = 0; //lb
-                indices[1] = 3; //rt
-                indices[2] = 2; //lt
+                indices[1] = 2; //lt
+                indices[2] = 1; //rb
+                
                 //bottom right tri 
-                indices[3] = 0; //lb
+                indices[3] = 3; //rt
                 indices[4] = 1; //rb
-                indices[5] = 3; //rt
+                indices[5] = 0; //lb
+                
+                // // upper left tri
+                // indices[0] = 2; //lb
+                // indices[1] = 3; //rt
+                // indices[2] = 0; //lt
+                // //bottom right tri 
+                // indices[3] = 3; //lb
+                // indices[4] = 1; //rb
+                // indices[5] = 0; //rt
 
                 #endregion
 
                 #region send data to gpu 
                 Mesh mesh = new Mesh();
                 mesh.SetVertices(vertices, 0, vertices.Length);
-                mesh.SetIndices(indices, 0, indices.Length);
+                mesh.SetIndices(indices, 0, indices.Length, MeshTopology.Triangles, 0);
                 
                 Material.SetVector("_BackgroundColor", ui.Color);
                 
-                Graphics.DrawMesh(mesh, float4x4.identity, Material, 0);
+                // Graphics.DrawMesh(mesh, float4x4.identity, Material, 1, Camera);
+                Graphics.DrawMesh(mesh, float4x4.identity, Material, 1, Camera);
 
                 vertices.Dispose();
                 indices.Dispose();
