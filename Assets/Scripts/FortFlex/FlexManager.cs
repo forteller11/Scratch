@@ -10,21 +10,29 @@ namespace Fort.Flex
     public class FlexManager : MonoBehaviour
     {
         public Camera Camera;
+        public MeshFilter DebugFilter;
         public Material Material;
         private const float Z_INCREMENT_BY_LAYER = 0.05f;
         public int InitialLayer = 0;
         public Div Root;
+        public float2 Size = new float2(500, 500);
+        public float2 Offset = new float2(40, 0);
 
         private void Start()
         {
             Root = new Div(
-                new float2(Screen.width/2f, Screen.height/2f), 
-                new float2(500, 40), 
+                Size, 
+                Offset,
                 new Color(0,1,0,1));
         }
 
         private void Update()
         {
+            Root = new Div(
+                Size, 
+                Offset,
+                new Color(0,1,0,1));
+            
             DrawRecurse(Root, new ScreenBound(Screen.width, Screen.height), InitialLayer);
         }
 
@@ -55,9 +63,9 @@ namespace Fort.Flex
                 
                 #region positioning normalized
                 float2 screenMax = new float2(Screen.width, Screen.height);
-                var posStartView = posStartScreen / screenMax;
-                var posEndView = posEndScreen / screenMax;
-                
+                float2 screenMaxHalf =screenMax / 2;
+                var posStartView = (posStartScreen) / screenMaxHalf;
+                var posEndView = (posEndScreen) / screenMaxHalf;
                 #endregion
 
                 #region to cpu side mesh
@@ -81,7 +89,7 @@ namespace Fort.Flex
                 // upper left tri
                 indices[0] = 0; //lb
                 indices[1] = 2; //lt
-                indices[2] = 1; //rb
+                indices[2] = 3; //rt
                 
                 //bottom right tri 
                 indices[3] = 3; //rt
@@ -101,13 +109,16 @@ namespace Fort.Flex
 
                 #region send data to gpu 
                 Mesh mesh = new Mesh();
+                // mesh.SetVertexBufferData();
                 mesh.SetVertices(vertices, 0, vertices.Length);
                 mesh.SetIndices(indices, 0, indices.Length, MeshTopology.Triangles, 0);
-                
+                mesh.RecalculateBounds();
                 Material.SetVector("_BackgroundColor", ui.Color);
                 
-                // Graphics.DrawMesh(mesh, float4x4.identity, Material, 1, Camera);
-                Graphics.DrawMesh(mesh, float4x4.identity, Material, 1, Camera);
+                //todo SOMETHING IS WRONG HERE..... 
+                //todo Bad mesh probably
+                Graphics.DrawMesh(mesh, float4x4.identity, Material, 0, Camera);
+
 
                 vertices.Dispose();
                 indices.Dispose();
