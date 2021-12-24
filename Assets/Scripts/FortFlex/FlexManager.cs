@@ -100,6 +100,7 @@ namespace Fort.Flex
                 // indices[0] = 2; //lb
                 // indices[1] = 3; //rt
                 // indices[2] = 0; //lt
+                
                 // //bottom right tri 
                 // indices[3] = 3; //lb
                 // indices[4] = 1; //rb
@@ -109,15 +110,35 @@ namespace Fort.Flex
 
                 #region send data to gpu 
                 Mesh mesh = new Mesh();
+                Vector3[] meshVertices = new Vector3[vertices.Length];
+                for (int i = 0; i < vertices.Length; i++)
+                    meshVertices[i] = vertices[i];
+
+                int[] meshIndices = new int[indices.Length];
+                for (int i = 0; i < indices.Length; i++)
+                    meshIndices[i] = indices[i];
+
+                Vector2[] newUV = new Vector2[vertices.Length];
+                
                 // mesh.SetVertexBufferData();
-                mesh.SetVertices(vertices, 0, vertices.Length);
-                mesh.SetIndices(indices, 0, indices.Length, MeshTopology.Triangles, 0);
+                
+                mesh.vertices = meshVertices;
+                mesh.triangles = meshIndices;
+                mesh.uv = newUV;
+                
                 mesh.RecalculateBounds();
+                mesh.RecalculateNormals();
+                mesh.RecalculateTangents();
+                mesh.RecalculateUVDistributionMetrics();
+                
+                // mesh.SetVertices(vertices, 0, vertices.Length);
+                // mesh.SetIndices(indices, 0, indices.Length, MeshTopology.Triangles, 0);
                 Material.SetVector("_BackgroundColor", ui.Color);
                 
                 //todo SOMETHING IS WRONG HERE..... 
                 //todo Bad mesh probably
-                Graphics.DrawMesh(mesh, float4x4.identity, Material, 0, Camera);
+                
+                Graphics.DrawMesh(mesh, float4x4.identity, Material, 0);
 
 
                 vertices.Dispose();
