@@ -4,6 +4,6 @@
     {
         Uninitialized = default,
         Pixel,
-        Percentage
+        Peruniage  //per-cent-age but out of 1 instead of 100
     }
 }

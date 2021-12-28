@@ -1,4 +1,5 @@
-﻿using Fort.Flex.Positioning;
+﻿using System;
+using Fort.Flex.Positioning;
 using Unity.Collections;
 using Unity.Mathematics;
 using UnityEngine;
@@ -46,10 +47,7 @@ namespace Fort.Flex
             }
         }
 
-        ScreenBound CalculateScreenBounds(Div div, ScreenBound parentScreenBounds)
-        {
-            div
-        }
+      
         public ScreenBound Draw(Div ui, ScreenBound parentDrawBounds, int layer)
         {
             #region positioning screen
@@ -105,4 +103,6 @@ namespace Fort.Flex
             return new Color(f.x, f.y, f.x, f.w);
         }
     }
+
+    
 }
