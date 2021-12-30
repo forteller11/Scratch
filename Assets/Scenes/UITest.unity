@@ -236,7 +236,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &407633846
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -249,7 +249,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7d83ba7c2c4da854cb0b783f0967fced, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Mesh: {fileID: 4300006, guid: efe9381559c516743bd05cef82f39ebb, type: 3}
   Material: {fileID: 2100000, guid: faa588f653c80a64ab9fc29cae8e5008, type: 2}
 --- !u!4 &407633847
 Transform:
@@ -456,9 +455,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 67a371e10c5a41408a72e9bbe536d93f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Camera: {fileID: 1376634510}
-  DebugFilter: {fileID: 110075968}
-  Material: {fileID: 2100000, guid: e2d6653f4b3cd384894bdf4f7dcbf514, type: 2}
+  Material: {fileID: 2100000, guid: faa588f653c80a64ab9fc29cae8e5008, type: 2}
   InitialLayer: 0
   Size:
     x: 500

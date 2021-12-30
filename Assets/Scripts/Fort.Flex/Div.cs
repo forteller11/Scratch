@@ -11,17 +11,21 @@ namespace Fort.Flex
     {
         public float2 WorldScale;
         public PositioningType Type;
+
+        public StyleValue ScaleWidth;
+        public StyleValue ScaleHeight;
+        public StylePair Scale => new StylePair(ScaleWidth, ScaleHeight);
         
-        public StyleValue X;
-        public StyleValue Y;
-        public StylePair Position => new StylePair(X, Y);
+        // public StyleValue X;
+        // public StyleValue Y;
+        // public StylePair Position => new StylePair(X, Y);
         
-        public StyleValue MarginL;
-        public StyleValue MarginR;
-        public StyleValue MarginT;
-        public StyleValue MarginB;
-        public StylePair MarginX => new StylePair(MarginL, MarginR);
-        public StylePair MarginY => new StylePair(MarginB, MarginT);
+        public StyleValue MarginLeft;
+        public StyleValue MarginRight;
+        public StyleValue MarginTop;
+        public StyleValue MarginBottom;
+        public StylePair MarginWidth => new StylePair(MarginLeft, MarginRight);
+        public StylePair MarginHeight => new StylePair(MarginBottom, MarginTop);
         
         public Color Color = new Color(1, 0, 1, 1);
 
@@ -31,28 +35,27 @@ namespace Fort.Flex
         public Div(float2 worldScale, StyleValue x, StyleValue y, Color color)
         {
             WorldScale = worldScale;
-            X = x;
-            Y = y;
             Color = color;
         }
 
         public Div(float2 worldScale, StyleValue x, StyleValue y, PositioningType positioningType)
         {
             WorldScale = worldScale;
-            X = x;
-            Y = y;
             Type = positioningType;
         }
 
         public void WithColor(Color color) => Color = color;
 
         //bound with margins, render quad
-        public (ScreenBound, Quad) GetScreenBoundsBasedOffParent(ScreenBound bounds)
+        public (ScreenBound, Quad) GetScreenBoundsBasedOffParent(ScreenBound bounds, ref WrappingInfo info)
         {
             if (Type == PositioningType.Relative)
             {
-                var resultBoundsX = GetPositionFromBounds(X, bounds.BoundsX);
-                var resultBoundsY = GetPositionFromBounds(Y, bounds.BoundsY);
+                var resultBoundsX = GetPositionFromBounds(ScaleWidth, MarginWidth, bounds.BoundsX, ref info);
+                var resultBoundsY = GetPositionFromBounds(ScaleHeight, MarginHeight, bounds.BoundsY, ref info);
+                
+                //todo can fit within wrap?
+                //if not............ 
                 return new ScreenBound(resultBoundsX, resultBoundsY);
             }
             else
@@ -64,20 +67,29 @@ namespace Fort.Flex
         }
 
         /// <summary>
-        /// gets screen bounds along particular position axis
+        /// returns in screen pixel bounds
         /// </summary>
-        /// <param name="styleValue"></param>
-        /// <param name="bounds"> screen bounds of parent</param>
-        /// <returns> screen bounds along axis</returns>
-        public static float2 GetPositionFromBounds(StyleValue position, StylePair margin, float2 bounds)
+        /// <param name="scale"></param>
+        /// <param name="margin"></param>
+        /// <param name="bounds"></param>
+        /// <param name="wrappingInfo"></param>
+        /// <returns> screne bounds + margin, screen visual</returns>
+        public static (float2, float2) GetPositionFromBounds(StyleValue scale, StylePair margin, float2 bounds, ref WrappingInfo wrappingInfo)
         {
-            float positionPixel = position.GetValueInPixelCoords(bounds);
+            float scalePixel = scale.GetValueInPixelCoords(bounds);
             float2 marginsPixel = margin.GetValuesInPixelCoords(bounds);
+
+            float scaleTotal = marginsPixel.x + scalePixel + marginsPixel.y;
+            float leftBoundsMargin = scalePixel - marginsPixel.x;
+            float rightBoundsMargin = scalePixel - marginsPixel.y;
+            
+
+            //todo REL Position WITHOUT POSITION
+            //todo WRAPPING DIR / Behavior when cut off?
             
             //todo if scale is scaling... dooo.....
             //todo get scale... wrap?
-            
-            
+
             //else... 
             //todo get pixel,
             //todo scale
